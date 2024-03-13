@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>防抖节流</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script>
+    // 防抖
+    function debounce(fn) {
+      let time = null
+
+      return function() {
+        clearTimeout(time)
+        time = setTimeout(() => {
+          fn.apply(null, arguments)
+        }, 500)
+      }
+    }
+
+    function sayHi() {
+      console.log('我测试防抖')
+    }
+
+    let sayHiDebounce = debounce(sayHi)
+
+    // 节流
+    function throttle(fn) {
+      let time = null
+      return function() {
+        if(time) {
+          return
+        }
+        time = setTimeout(() => {
+          fn.apply(null, arguments)
+          time = null
+        }, 500)
+      }
+    }
+
+    function sayHello() {
+      console.log('我测试节流')
+    }
+
+    window.onresize = throttle(sayHello)
+  </script>
+</head>
+<body>
+  <button onclick="sayHiDebounce()">防抖</button>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>深度优先和广度优先</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script>
+    let obj = { 
+      children: [{ 
+        index: 0, 
+        children: [{ 
+          index: 1, 
+          children: [{ 
+              index: 3 
+          }] 
+        }] 
+      }, { 
+        index: 4 
+      }, { 
+        index: 5, 
+        children: [{ 
+          index: 7, 
+          children: [{ 
+              index: 8 
+          }] 
+        }] 
+      }, { 
+        index: 6 
+      }] 
+    }
+
+    // 深度优先
+    function deep (node, nodeList = []) {
+      if (node !== null) {
+        nodeList.push(node)
+        let children = node.children || []
+        children.forEach(item => {
+          deep(item, nodeList)
+        });
+      }
+      return nodeList
+    }
+    console.log(deep(obj))
+
+
+
+    // 广度优先
+    function width(node) {
+      let nodes = []
+      let stack = []; // 储存节点信息
+      if (node) {
+        stack.push(node)
+
+        while(stack.length) {
+          // 取出第一个，并从栈中删除掉
+          let item = stack.shift()
+          nodes.push(item)
+          let children = item.children || []
+          children.forEach(item => {
+            stack.push(item)
+          });
+        }
+      }
+
+      return nodes
+    }
+
+    console.log(width(obj))
+
+  </script>
+</head>
+<body>
+  
+</body>
+</html>
