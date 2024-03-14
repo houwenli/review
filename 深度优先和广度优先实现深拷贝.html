@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+  <title>深度优先和广度优先实现深拷贝</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1'>
+  <script>
+    let obj = { 
+      func: function() {},
+      [Symbol()]: 1,
+      children: [{ 
+        index: 0, 
+        date: new Date(),
+        reg: new RegExp(/\d/),
+        children: [{ 
+          index: 1, 
+          children: [{ 
+              index: 3 
+          }] 
+        }] 
+      }, { 
+        index: 4 
+      }, { 
+        index: 5, 
+        children: [{ 
+          index: 7, 
+          children: [{ 
+              index: 8 
+          }] 
+        }] 
+      }, { 
+        index: 6 
+      }],
+      map: new Map().set('a', 1).set('b', 2)
+    }
+
+    Object.setPrototypeOf(obj, {
+      sayHi: function() {
+        console.log('sayHi')
+      }
+    })
+    // obj.loop = obj
+
+    // 深度优先
+    const deepClone = function (targetObj) {
+      if (typeof targetObj === "object" && targetObj !== null) {
+        let cloneObj = {}
+
+        for (const prop in targetObj) {
+          const val = targetObj[prop]
+          if (typeof val === "object" && val !== null) {
+            cloneObj[prop] = deepClone(val)
+          } else {
+            cloneObj[prop] = val
+          }
+        }
+        return cloneObj
+      } else {
+        return targetObj
+      }
+    }
+    console.log(obj)
+    console.log(deepClone(obj))
+
+    // 问题
+    // function 直接复制了，不算深拷贝
+    // Date，RegExp因为判断成对象成空{}
+    // 数组判断成对象，直接转换成键值对了
+    // Map，Set对象也成空{}
+    // 不可枚举属性遍历不出来
+    // 原型上的属性能遍历出来复制到对象上了
+    // 如果有循环引用直接挂
+
+    function isObject(targetObj) {
+      return typeof targetObj === "object" && targetObj !== null || typeof targetObj === "function"
+    }
+    // 完整的deepclone
+    function completeDeepclone(data) {
+      // 简单数据直接返回
+      if(!isObject(data)) {
+        return data
+      }
+
+      // 日期正则用相应构造函数
+      if([Date, RegExp].includes(data.constructor)) {
+        return new data.constructor(data)
+      }
+
+      // 拷贝方法
+      if (typeof data === "function") {
+        return new Function('return ' + data.toString()).call(this)
+      }
+
+      // 处理map和set
+      // 这俩需要进行循环
+      if(data instanceof Map) {
+        const res = new Map()
+        data.forEach((val, key) => {
+          if(isObject(data)) {
+            res.set(key, completeDeepclone(val))
+          } else {
+            res.set(key, val)
+          }
+        })
+        return res
+      }
+
+      if(data instanceof Set) {
+        const res = new Set()
+        data.forEach((val, key) => {
+          if(isObject(data)) {
+            res.add(completeDeepclone(val))
+          } else {
+            res.add(val)
+          }
+        })
+        return res
+      }
+
+      // 原型数据
+      const allDesc = Object.getOwnPropertyDescriptors(data)
+      let cloneObj = Object.create(Object.getPrototypeOf(data), allDesc)
+
+      // 处理不可枚举属性
+      let keys = Object.getOwnPropertyNames(data)
+      console.log(keys)
+      // 其他就是正常数据了
+      for (const prop of keys) {
+        const val = data[prop]
+        if(!isObject(val)) {
+          cloneObj[prop] = val
+        } else {
+          cloneObj[prop] = completeDeepclone(val)
+        }
+      }
+
+      return cloneObj
+    }
+
+    console.log(completeDeepclone(obj))
+
+  </script>
+</head>
+<body>
+  
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实现一个new</title>
+  <script>
+    function Person() {
+      this.name = 'hhh'
+      this.age = 20
+      this.func = function ( ){
+        console.log('func')
+      }
+
+      return null
+    }
+    Person.prototype.sayHi = function () {
+      console.log(sayHi)
+    }
+
+    const person = new Person()
+
+    console.log(person)
+
+    function myNew (func) {
+      const obj = Object.create(func.prototype)
+      let res = func.apply(obj)
+      return res instanceof Object ? res : obj
+    }
+
+    const person1 = myNew(Person)
+    console.log(person1)
+  </script>
+</head>
+<body>
+  
+</body>
+</html>
