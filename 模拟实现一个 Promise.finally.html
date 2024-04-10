@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>模拟实现一个 Promise.finally</title>
+  <script>
+    // Promise.prototype.finally = function(callback) {
+    //   console.log(this.constructor)
+
+    //   let P = this.constructor
+      
+    //   return this.then(ret => P.resolve(callback()).then(() => ret)).catch(err => P.resolve(callback()).then(() => err))
+
+    // }
+
+    Promise.resolve(111).then(ret => {
+      console.log(666, ret)
+      return 222
+    }).finally((ret) => {
+      console.log(3333, ret)
+    })
+  </script>
+</head>
+<body>
+  
+</body>
+</html>

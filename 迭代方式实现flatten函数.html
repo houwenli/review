@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>迭代方式实现flatten函数</title>
+  <script>
+    let arr = [1, 2, 3, [4, 5], [6, 7, [8, 9]]]
+
+    function wrap() {
+      let ret = []
+      return function flat (arr) {
+        for (let val of arr) {
+          if (val.constructor === Array) {
+            flat(val)
+          } else {
+            ret.push(val)
+          }
+        }
+
+        return ret
+      }
+      
+    }
+
+    console.log(wrap()(arr))
+  </script>
+</head>
+<body>
+  
+</body>
+</html>

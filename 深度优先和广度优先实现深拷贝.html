@@ -32,8 +32,10 @@
       }, { 
         index: 6 
       }],
-      map: new Map().set('a', 1).set('b', 2)
+      map: new Map().set('a', 1).set('b', 2),
     }
+    // 循环引用
+    obj.loop = obj
 
     Object.setPrototypeOf(obj, {
       sayHi: function() {
@@ -43,25 +45,25 @@
     // obj.loop = obj
 
     // 深度优先
-    const deepClone = function (targetObj) {
-      if (typeof targetObj === "object" && targetObj !== null) {
-        let cloneObj = {}
+    // const deepClone = function (targetObj) {
+    //   if (typeof targetObj === "object" && targetObj !== null) {
+    //     let cloneObj = {}
 
-        for (const prop in targetObj) {
-          const val = targetObj[prop]
-          if (typeof val === "object" && val !== null) {
-            cloneObj[prop] = deepClone(val)
-          } else {
-            cloneObj[prop] = val
-          }
-        }
-        return cloneObj
-      } else {
-        return targetObj
-      }
-    }
-    console.log(obj)
-    console.log(deepClone(obj))
+    //     for (const prop in targetObj) {
+    //       const val = targetObj[prop]
+    //       if (typeof val === "object" && val !== null) {
+    //         cloneObj[prop] = deepClone(val)
+    //       } else {
+    //         cloneObj[prop] = val
+    //       }
+    //     }
+    //     return cloneObj
+    //   } else {
+    //     return targetObj
+    //   }
+    // }
+    // console.log(obj)
+    // console.log(deepClone(obj))
 
     // 问题
     // function 直接复制了，不算深拷贝
@@ -75,11 +77,23 @@
     function isObject(targetObj) {
       return typeof targetObj === "object" && targetObj !== null || typeof targetObj === "function"
     }
+
+    let map = new WeakMap()
+    let count = 1
     // 完整的deepclone
     function completeDeepclone(data) {
+      count++
+      if(count > 100) return
       // 简单数据直接返回
       if(!isObject(data)) {
         return data
+      }
+
+      // 如果对象在缓存就直接返回
+      const exist = map.get(data);
+      console.log(111, map, data, exist)
+      if (exist) {
+        return exist
       }
 
       // 日期正则用相应构造函数
@@ -96,6 +110,7 @@
       // 这俩需要进行循环
       if(data instanceof Map) {
         const res = new Map()
+        map.set(data, res)
         data.forEach((val, key) => {
           if(isObject(data)) {
             res.set(key, completeDeepclone(val))
@@ -108,6 +123,7 @@
 
       if(data instanceof Set) {
         const res = new Set()
+        map.set(data, res)
         data.forEach((val, key) => {
           if(isObject(data)) {
             res.add(completeDeepclone(val))
@@ -124,16 +140,14 @@
 
       // 处理不可枚举属性
       let keys = Object.getOwnPropertyNames(data)
-      console.log(keys)
+      // console.log(keys)
       // 其他就是正常数据了
       for (const prop of keys) {
         const val = data[prop]
-        if(!isObject(val)) {
-          cloneObj[prop] = val
-        } else {
-          cloneObj[prop] = completeDeepclone(val)
-        }
+        cloneObj[prop] = completeDeepclone(val)
       }
+
+      map.set(data, cloneObj)
 
       return cloneObj
     }

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>实现 convert 方法，把原始 list 转换成树形结构</title>
+  <script>
+    let list = [
+      {id:1,name:'部门 A',parentId:0},
+      {id:2,name:'部门 B',parentId:0},
+      {id:3,name:'部门 C',parentId:1},
+      {id:4,name:'部门 D',parentId:1},
+      {id:5,name:'部门 E',parentId:2},
+      {id:6,name:'部门 F',parentId:3},
+      {id:7,name:'部门 G',parentId:2},
+      {id:8,name:'部门 H',parentId:4}
+    ];
+
+    // 简单方法 遍历
+    // 使用对象引用模式
+    
+    // let map = list.reduce((res, v) => {
+    //   res[v.id] = v
+    //   return res
+    // }, {})
+
+    // let res = []
+
+    // for (let i = 0; i < list.length; i++) {
+    //   if (list[i].parentId == 0) {
+    //     res.push(list[i])
+    //     continue
+    //   }
+    //   let father = map[list[i].parentId]
+    //   if(father) {
+    //     father.children = father.children || []
+    //     father.children.push(list[i])
+    //   }
+    // }
+
+    // console.log(res)
+
+
+  </script>
+</head>
+<body>
+  let list =[
+    {id:1,name:'部门 A',parentId:0},
+    {id:2,name:'部门 B',parentId:0},
+    {id:3,name:'部门 C',parentId:1},
+    {id:4,name:'部门 D',parentId:1},
+    {id:5,name:'部门 E',parentId:2},
+    {id:6,name:'部门 F',parentId:3},
+    {id:7,name:'部门 G',parentId:2},
+    {id:8,name:'部门 H',parentId:4}];
+
+
+    let result =
+    [{
+      id: 1,
+      name: '部门 A',
+      parentId: 0,
+      children: [
+        {
+        id: 3,
+        name: '部门 C',
+        parentId: 1
+        }
+      ]
+    }]
+</body>
+</html>

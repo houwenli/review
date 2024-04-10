@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>设计 LazyMan 类，实现以下功能</title>
+  <script>
+
+    function LazyMan(name) {
+      return new LazyManClass(name)
+    }
+
+    // 第一种实现方式
+    // class LazyManClass {
+    //   constructor(name) {
+    //     this.name = name
+    //     console.log(`Hi I am ${this.name}`)
+
+    //     this.queen = []
+
+    //     // 等到执行方法队列生成之后开始执行next
+    //     setTimeout(() => {
+    //       this.next()
+    //     })
+    //   }
+    //   next() {
+    //     let fn = this.queen.shift()
+    //     fn && fn()
+    //   }
+    //   sleepFirst(sec) {
+    //     let fn = () => {
+    //       setTimeout(() => {
+    //         console.log(`先等了 ${sec}秒`)
+    //         this.next()
+    //       }, sec * 1000)
+    //     }
+    //     this.queen.unshift(fn)
+    //     return this
+    //   }
+    //   sleep(sec) {
+    //     let fn = () => {
+    //       setTimeout(() => {
+    //         console.log(`等了 ${sec}秒`)
+    //         this.next()
+    //       }, sec * 1000)
+    //     }
+    //     this.queen.push(fn)
+    //     return this
+    //   }
+    //   eat(food) {
+    //     let fn = () => {
+    //       console.log(`Hi I am eating ${food}`)
+    //       this.next()
+    //     }
+    //     this.queen.push(fn)
+    //     return this
+    //   }
+    // }
+
+    // 第二种实现方式  promise
+    class LazyManClass {
+      constructor(name) {
+        this.name = name
+        console.log(`Hi I am ${this.name}`)
+
+        this.queen = []
+
+        setTimeout(() => {
+          this.next()
+        })
+      }
+
+      next() {
+        // 对queen依次执行
+        this.queen.reduce((chain, cur) => {
+          return chain.then(cur)
+        }, Promise.resolve())
+      }
+
+      sleepFirst(sec) {
+        let fn = () => {
+          return new Promise(resolve => setTimeout(resolve, sec * 1000))
+        }
+        this.queen.unshift(fn)
+        return this
+      }
+
+      sleep(sec) {
+        let fn = () => {
+          return new Promise(resolve => setTimeout(resolve, sec * 1000))
+        }
+        this.queen.push(fn)
+        return this
+      }
+
+      eat(food) {
+        let fn = () => {
+          return Promise.resolve(console.log(`Hi I am eating ${food}`))
+        }
+        this.queen.push(fn)
+        return this
+      }
+    }
+
+    // LazyMan('Tony');
+    // LazyMan('Tony').sleep(2).eat('lunch');
+    // LazyMan('Tony').eat('lunch').sleep(10).eat('dinner');
+    LazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(10).eat('junk food');
+  </script>
+</head>
+<body>
+  LazyMan('Tony');
+  // Hi I am Tony
+  LazyMan('Tony').sleep(10).eat('lunch');
+  // Hi I am Tony
+  // 等待了 10 秒...
+  // I am eating
+  lunchLazyMan('Tony').eat('lunch').sleep(10).eat('dinner');
+  // Hi I am Tony
+  // I am eating lunch// 等待了 10 秒...
+  // I am eating
+  dinerLazyMan('Tony').eat('lunch').eat('dinner').sleepFirst(5).sleep(1
+  0).eat('junk food');
+  // Hi I am Tony// 等待了 5 秒...
+  // I am eating lunch
+  // I am eating dinner
+  // 等待了 10 秒...
+  // I am eating junk food
+</body>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>请实现一个 add 函数，满足以下功能 -- 函数柯里化</title>
+  <script>
+    // function currying(fn, length) {
+    //   length = length || fn.length; // 注释 1
+    //   return function (...args) { // 注释 2 
+    //     return args.length >= length // 注释 3
+    //       ? fn.apply(this, args) // 注释 4
+    //       : currying(fn.bind(this, ...args), length - args.length) // 注释5 
+    //   }
+    // }
+
+    // let num = 0
+    // let add = currying(function() {
+    //   var i = 0; len = arguments.length;
+    //   for(i; i < len; i++) {
+    //     num += arguments[i]
+    //   }
+    // })
+
+    // add(1)(2)
+    // console.log(num)
+
+
+    // function currying(fn, length) {  
+    //   length = length || fn.length; 	// 注释 1  
+    //   return function(...args) {			// 注释 2    
+    //     return args.length >= length	// 注释 3      
+    //     ? fn.apply(this, args)			// 注释 4      
+    //     : currying(fn.bind(this, ...args), length - args.length) // 注释 5  
+    //   }
+    // }
+        /** 注释 1：第一次调用获取函数 fn 参数的长度，后续调用获取 fn 剩余参数的长度 注释 
+         * 2：currying 包裹之后返回一个新函数，接收参数为 ...args 
+         * 注释 3：新函数接收的参数长度是否大于等于 fn 剩余参数需要接收的长度 
+         * 注释 4：满足要求，执行 fn 函数，传入新函数的参数 
+         * 注释 5：不满足要求，递归 currying 函数，新的 fn 为 bind 返回的新函数（bind 绑定了 ...args 参数，未执行），新的 length 为 fn 剩余参数的长度 
+         * */
+
+
+
+        // function add() {  
+        //   let args = [].slice.call(arguments);  
+        //   let fn = function() {    
+        //     let fn_args = [].slice.call(arguments)    
+        //     return add.apply(null, args.concat(fn_args))  
+        //   }  
+        //   fn.toString = function() {    
+        //     return args.reduce((a, b) => a + b)  
+        //   }  
+        //   return fn
+        // }
+
+        // 收集参数，最后使用toString进行统一处理
+        // function add() {
+        //   let args = [].slice.call(arguments);
+        //   let fn = function () {
+        //     let fn_args = [].slice.call(arguments);
+        //     return add.apply(null, args.concat(fn_args));
+        //   };
+        //   fn.toString = function () {
+        //     return args.reduce((a, b) => a + b);
+        //   };
+        //   return fn;
+        // }
+
+        // console.log(add(1,2,3)(1).toString())
+       
+
+        const currying = fn =>
+          judge = (...args) =>
+            args.length >= fn.length
+              ? fn(...args)
+              : (...arg) => judge(...args, ...arg)
+
+        let add = currying(function() {
+          let args = [].slice.call(arguments);
+          return args.reduce((a, b) => a + b);
+        })
+
+        console.log(add(1, 2))
+  </script>
+</head>
+<body>
+  add(1); // 1
+  add(1)(2); // 3
+  add(1)(2)(3); // 6
+  add(1)(2, 3); // 6
+  add(1, 2)(3);// 6
+  add(1, 2, 3); // 6
+</body>
+</html>
